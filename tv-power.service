@@ -1,0 +1,13 @@
+[Unit]
+Description=Turns on and off the TV based on chromecast state
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/tv-power
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target

@@ -23,11 +23,12 @@
 
     ```
     sudo apt install python3-pip
-    pip install pychromecast
+    pip3 install pychromecast
+    pip3 install py_irsend
     sudo apt install lirc
     ```
 
 1. Configure lirc [this was non-trivial in buster](https://www.raspberrypi.org/forums/viewtopic.php?t=235256)
-
-
+1. Install `./insall.sh`
+1. Use TV!
 

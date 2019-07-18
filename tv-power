@@ -1,16 +1,35 @@
 #!/usr/bin/env python3
-import pychromecast
+import subprocess
 from time import sleep
 
-CHROMECAST_NAME = "Bedroom TV"
+import pychromecast
+from py_irsend import irsend
+
+CHROMECAST_NAME = 'Bedroom TV'
+TV = 'Sanyo_TV'
 
 pychromecast.IGNORE_CEC.append('*')
-CHROMECAST = next((cc
-    for cc in pychromecast.get_chromecasts()
-    if cc.device.friendly_name == CHROMECAST_NAME), None)
+CHROMECAST = None
+
+
+def toggle_power():
+    # Not entirely sure, but need to hold the power button for a bit
+    for i in range(4):
+        irsend.send_once(TV, ['KEY_POWER'])
+    print('Toggled Power')
+
 
 if __name__ == '__main__':
+    CHROMECAST = next((cc
+        for cc in pychromecast.get_chromecasts()
+        if cc.device.friendly_name == CHROMECAST_NAME), None)
     CHROMECAST.wait()
+    last_state = CHROMECAST.is_idle
+
+    print('Polling Idle State')
     while True:
-        print(CHROMECAST.is_idle)
+        state = CHROMECAST.is_idle
+        if state != last_state:
+            last_state = state
+            toggle_power()
         sleep(1)
