@@ -4,6 +4,7 @@ from time import sleep
 
 CHROMECAST_NAME = "Bedroom TV"
 
+pychromecast.IGNORE_CEC.append('*')
 CHROMECAST = next((cc
     for cc in pychromecast.get_chromecasts()
     if cc.device.friendly_name == CHROMECAST_NAME), None)
@@ -11,5 +12,5 @@ CHROMECAST = next((cc
 if __name__ == '__main__':
     CHROMECAST.wait()
     while True:
-        print(CHROMECAST.status.is_stand_by)
+        print(CHROMECAST.is_idle)
         sleep(1)
