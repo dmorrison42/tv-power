@@ -7,6 +7,7 @@ from py_irsend import irsend
 
 CHROMECAST_NAME = 'Bedroom TV'
 TV = 'Sanyo_TV'
+STATUS_PIN = 18
 
 pychromecast.IGNORE_CEC.append('*')
 CHROMECAST = None
@@ -19,15 +20,42 @@ def toggle_power():
     print('Toggled Power')
 
 
+def configure_status():
+    subprocess.run(f'gpio -g mode {STATUS_PIN} up'.split())
+
+
+def is_on():
+    status = subprocess.run(f'gpio -g read {STATUS_PIN}'.split(),
+                            capture_output=True)
+    txt = status.stdout.decode().strip()
+    return not int(txt)
+
+
+def is_correct_state():
+    return is_on() != CHROMECAST.is_idle
+
+
 if __name__ == '__main__':
     CHROMECAST = next((cc
         for cc in pychromecast.get_chromecasts()
         if cc.device.friendly_name == CHROMECAST_NAME), None)
     CHROMECAST.wait()
     last_state = CHROMECAST.is_idle
+    states = [True] * 10
+
+    configure_status()
 
     print('Polling Idle State')
+    i = 0
     while True:
+        i = (i + 1) % 10
+        states[i] = is_correct_state()
+        if True not in states:
+            print('Correcting State')
+            toggle_power()
+            states = [True] * 10
+            continue
+
         state = CHROMECAST.is_idle
         if state != last_state:
             last_state = state
