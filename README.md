@@ -1,4 +1,25 @@
-# Prereqs
+# TV Power
+
+Controls a TV using an IR blaster based on feedback from a Chromecast.
+
+Example usage:
+
+1. TV is off
+1. Cast to TV
+1. TV turns on
+1. Video ends
+1. TV turns off
+
+## Hardware
+
+I am using a Raspberry Pi Zero W, but any chromecast with LIRC support will do.
+
+### Parts:
+
+- An IR LED (Stole from a remote) (1x)
+- 51kΩ, 22kΩ, and 51Ω resistors (1x each) [(Starter kit here)](https://www.amazon.com/dp/product/B07BKRS4QZ)
+- Pretty much any N type transistor (2x) [(Got mine from Amazon)](https://www.amazon.com/gp/product/B07BKX255D)
+
 
 ## SD Card Prep
 
@@ -18,6 +39,8 @@
         }
         ```
 
+## Raspberry Pi Configuration
+
 1. boot raspberry pi
 1. install pre-reqs
 
@@ -32,3 +55,7 @@
 1. Install `./insall.sh`
 1. Use TV!
 
+## TODO
+
+[] Make a config file instead of globals
+[] Volume control
