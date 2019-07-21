@@ -57,5 +57,5 @@ I am using a Raspberry Pi Zero W, but any chromecast with LIRC support will do.
 
 ## TODO
 
-[] Make a config file instead of globals
-[] Volume control
+- [ ] Make a config file instead of globals
+- [ ] Volume control
