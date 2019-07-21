@@ -12,13 +12,18 @@ Example usage:
 
 ## Hardware
 
-I am using a Raspberry Pi Zero W, but any chromecast with LIRC support will do.
+I am using a Raspberry Pi Zero W, but any Raspberry Pi with LIRC support will do.
 
 ### Parts:
 
 - An IR LED (Stole from a remote) (1x)
 - 51kΩ, 22kΩ, and 51Ω resistors (1x each) [(Starter kit here)](https://www.amazon.com/dp/product/B07BKRS4QZ)
 - Pretty much any N type transistor (2x) [(Got mine from Amazon)](https://www.amazon.com/gp/product/B07BKX255D)
+- Wire (CAT6 works great)
+
+### Schematic
+
+[!Schematic](./tv-power schematic.jpg)
 
 
 ## SD Card Prep
