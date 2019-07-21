@@ -11,13 +11,18 @@ STATUS_PIN = 18
 
 pychromecast.IGNORE_CEC.append('*')
 CHROMECAST = None
+THRESHOLD_VOLUME = 0.75
+
+
+def send_button(button, times=1):
+    for i in range(times):
+        irsend.send_once(TV, [button])
+    print(f'Hit {button} (x{times})')
 
 
 def toggle_power():
-    # Not entirely sure, but need to hold the power button for a bit
-    for i in range(4):
-        irsend.send_once(TV, ['KEY_POWER'])
-    print('Toggled Power')
+    # Not entirely sure why, but need to hold the button for a bit
+    send_button('KEY_POWER', 4)
 
 
 def get_chromecast(name):
@@ -43,6 +48,14 @@ def is_correct_state():
     return is_on() != CHROMECAST.is_idle
 
 
+def volume_up(increment):
+    send_button('KEY_VOLUMEUP', increment)
+
+
+def volume_down(increment):
+    send_button('KEY_VOLUMEDOWN', increment)
+
+
 if __name__ == '__main__':
     CHROMECAST = get_chromecast(CHROMECAST_NAME)
     last_state = CHROMECAST.is_idle
@@ -53,6 +66,13 @@ if __name__ == '__main__':
     print('Polling Idle State')
     i = 0
     while True:
+        # Switch on derivative (~1s)
+        state = CHROMECAST.is_idle
+        if state != last_state:
+            last_state = state
+            toggle_power()
+
+        # Switch if states don't match for 10 cycles (~10s)
         i = (i + 1) % 10
         states[i] = is_correct_state()
         if True not in states:
@@ -61,8 +81,15 @@ if __name__ == '__main__':
             states = [True] * 10
             continue
 
-        state = CHROMECAST.is_idle
-        if state != last_state:
-            last_state = state
-            toggle_power()
-        sleep(1)
+        # Handle Volume (~1s)
+        for i in range(10):
+            volume = CHROMECAST.status.volume_level
+            increment = round(abs(THRESHOLD_VOLUME - volume) / 0.05)
+            if volume > 0.96:
+                pass
+            elif volume > THRESHOLD_VOLUME:
+                volume_up(increment)
+            elif volume < THRESHOLD_VOLUME:
+                volume_down(increment)
+            CHROMECAST.set_volume(THRESHOLD_VOLUME)
+            sleep(0.1)

@@ -63,4 +63,3 @@ I am using a Raspberry Pi Zero W, but any Raspberry Pi with LIRC support will do
 ## TODO
 
 - [ ] Make a config file instead of globals
-- [ ] Volume control
