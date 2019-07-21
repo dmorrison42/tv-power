@@ -20,6 +20,14 @@ def toggle_power():
     print('Toggled Power')
 
 
+def get_chromecast(name):
+    chromecast = next((cc
+        for cc in pychromecast.get_chromecasts()
+        if cc.device.friendly_name == name), None)
+    chromecast.wait()
+    return chromecast
+
+
 def configure_status():
     subprocess.run(f'gpio -g mode {STATUS_PIN} up'.split())
 
@@ -36,10 +44,7 @@ def is_correct_state():
 
 
 if __name__ == '__main__':
-    CHROMECAST = next((cc
-        for cc in pychromecast.get_chromecasts()
-        if cc.device.friendly_name == CHROMECAST_NAME), None)
-    CHROMECAST.wait()
+    CHROMECAST = get_chromecast(CHROMECAST_NAME)
     last_state = CHROMECAST.is_idle
     states = [True] * 10
 
