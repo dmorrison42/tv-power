@@ -11,7 +11,8 @@ STATUS_PIN = 18
 
 pychromecast.IGNORE_CEC.append('*')
 CHROMECAST = None
-THRESHOLD_VOLUME = 0.75
+
+VOLUME_INCREMENT = 12
 
 
 def send_button(button, times=1):
@@ -57,6 +58,12 @@ def volume_down(increment):
 
 
 if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser(description='''Controls a TV based on a Chromecast's state.''')
+    parser.add_argument('--verbose', '-v', action='count')
+    args = parser.parse_args()
+
     CHROMECAST = get_chromecast(CHROMECAST_NAME)
     last_state = CHROMECAST.is_idle
     states = [True] * 10
@@ -64,7 +71,7 @@ if __name__ == '__main__':
     configure_status()
 
     print('Polling Idle State')
-    i = 0
+    state_index = 0
     while True:
         # Switch on derivative (~1s)
         state = CHROMECAST.is_idle
@@ -73,8 +80,12 @@ if __name__ == '__main__':
             toggle_power()
 
         # Switch if states don't match for 10 cycles (~10s)
-        i = (i + 1) % 10
-        states[i] = is_correct_state()
+        state_index = (state_index + 1) % 10
+        states[state_index] = is_correct_state()
+        if args.verbose:
+            if args.verbose >= 2:
+                print(f'Idle: {state} State {states[state_index]} {state_index}')
+            print('State Register: ' + ''.join('1' if state else '0' for state in states))
         if True not in states:
             print('Correcting State')
             toggle_power()
@@ -84,12 +95,13 @@ if __name__ == '__main__':
         # Handle Volume (~1s)
         for i in range(10):
             volume = CHROMECAST.status.volume_level
-            increment = round(abs(THRESHOLD_VOLUME - volume) / 0.05)
             if volume > 0.96:
-                pass
-            elif volume > THRESHOLD_VOLUME:
-                volume_up(increment)
-            elif volume < THRESHOLD_VOLUME:
-                volume_down(increment)
-            CHROMECAST.set_volume(THRESHOLD_VOLUME)
+                volume_down(6)
+                CHROMECAST.set_volume(.5)
+            elif volume >= 0.90:
+                CHROMECAST.set_volume(.5)
+                volume_up(VOLUME_INCREMENT)
+            elif volume <= 0.10:
+                volume_down(VOLUME_INCREMENT)
+                CHROMECAST.set_volume(.5)
             sleep(0.1)
