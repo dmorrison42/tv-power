@@ -23,7 +23,7 @@ I am using a Raspberry Pi Zero W, but any Raspberry Pi with LIRC support will do
 
 ### Schematic
 
-![Schematic](https://raw.githubusercontent.com/dmorrison42/tv-power/master/tv-power%20schematic.jpg)
+![Schematic](https://raw.githubusercontent.com/dmorrison42/tv-power/master/tv-power%20schematic.png)
 
 
 ## SD Card Prep
